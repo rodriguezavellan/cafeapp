@@ -265,24 +265,28 @@ elif seccion == "📅 Temporalidad":
         
         # Gráfico de barras y línea
         fig, ax1 = plt.subplots(figsize=(10, 6))
-        
+
         # Barras: Cantidad de ventas
-        color = 'tab:blue'
+        color_barras = 'tab:blue'
         ax1.set_xlabel('Mes')
-        ax1.set_ylabel('Cantidad', color=color)
-        ax1.bar(ventas_ingresos_mes["Mes"], ventas_ingresos_mes["Cantidad"], color=color, alpha=0.6)
-        ax1.tick_params(axis='y', labelcolor=color)
+        ax1.set_ylabel('Cantidad', color=color_barras)
+        ax1.bar(ventas_ingresos_mes["Mes"], ventas_ingresos_mes["Cantidad"], color=color_barras, alpha=0.6)
+        ax1.tick_params(axis='y', labelcolor=color_barras)
         
         # Línea: Ingreso
         ax2 = ax1.twinx()
-        color = 'tab:green'
-        ax2.set_ylabel('Ingreso ($)', color=color)
-        ax2.plot(ventas_ingresos_mes["Mes"], ventas_ingresos_mes["Ingreso"], color=color, marker='o', linewidth=2)
-        ax2.tick_params(axis='y', labelcolor=color)
+        color_linea = 'tab:green'
+        ax2.set_ylabel('Ingreso ($)', color=color_linea)
+        ax2.plot(ventas_ingresos_mes["Mes"], ventas_ingresos_mes["Ingreso"], color=color_linea, marker='o', linewidth=2)
+        ax2.tick_params(axis='y', labelcolor=color_linea)
         
-        plt.title("Cantidad Vendida vs Ingresos por Mes")
+        # Títulos y formato
+        plt.title("📈 Cantidad Vendida vs Ingresos por Mes", fontsize=14, fontweight='bold')
         plt.xticks(rotation=45)
+        plt.grid(axis='y', linestyle='--', alpha=0.4)  # línea de fondo suave
         plt.tight_layout()
+        
+        # Mostrar en la app
         st.pyplot(fig)
         
         # Mostrar el mes con mayor importe
