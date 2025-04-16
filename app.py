@@ -356,18 +356,18 @@ elif seccion == "💰 Ventas y Patrones":
     
     productos_destacados
 
-    # Tamaño del gráfico
-    plt.figure(figsize=(10, 6))
-    
-    # Scatterplot con Seaborn
+    fig, ax = plt.subplots(figsize=(10, 6))
     sns.scatterplot(
-        data=productos_destacados,
-        x="Quantity",
-        y="Precio Promedio",
-        hue="Item",           # Diferencia los productos por color
-        palette="viridis",    # Puedes cambiar la paleta si quieres
-        s=100                 # Tamaño de los puntos
+    data=productos_destacados,
+    x="Quantity",
+    y="Precio Promedio",
+    hue="Item",
+    palette="viridis",
+    s=100,
+    ax=ax
     )
+    ax.set_title("Productos con Buen Volumen y Buen Precio Promedio")
+    st.pyplot(fig)
     
     # Títulos y etiquetas
     plt.title("Productos Destacados: Alto Volumen y Buen Precio Promedio")
