@@ -346,71 +346,61 @@ elif seccion == "💰 Ventas y Patrones":
         st.pyplot(fig5)
 
         # Ingreso total por tipo
+        import plotly.express as px
         st.subheader("Ingreso total: Comida vs Bebida")
         tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
         
-        fig7, ax7 = plt.subplots()
-        sns.barplot(data=tipo_resumen, x="Tipo", y="Ingreso", ax=ax7, palette="Accent")
-        ax7.set_title("Ingreso total: Comida vs Bebida")
-        st.pyplot(fig7)
+        fig7 = px.bar(tipo_resumen, x="Tipo", y="Ingreso", color="Tipo",
+                      title="Ingreso total: Comida vs Bebida", color_discrete_sequence=px.colors.qualitative.Set2)
+        st.plotly_chart(fig7)
+    col1, col2 = st.columns(2)
 
+    with col1:
         # -----------------------------------------------
         st.subheader("Productos con buen volumen y buen precio promedio")
-        
-        # Agrupar por producto y calcular totales
+
         productos_resumen = cafe.groupby("Item")[["Quantity", "Ingreso"]].sum().reset_index()
-        
-        # Evitar división por cero o errores de longitud
         productos_resumen = productos_resumen[productos_resumen["Quantity"] != 0].copy()
         productos_resumen.dropna(subset=["Ingreso", "Quantity"], inplace=True)
-        
-        # Calcular precio promedio de forma segura
         productos_resumen["Precio Promedio"] = productos_resumen["Ingreso"].values / productos_resumen["Quantity"].values
         
-        # Umbrales para filtrar productos destacados
         umbral_volumen = productos_resumen["Quantity"].quantile(0.75)
         umbral_precio_promedio = productos_resumen["Precio Promedio"].mean()
         
-        # Filtrar productos que superen ambos umbrales
         productos_destacados = productos_resumen[
             (productos_resumen["Quantity"] > umbral_volumen) &
             (productos_resumen["Precio Promedio"] > umbral_precio_promedio)
         ]
         
-        # Gráfico de dispersión
-        fig, ax = plt.subplots(figsize=(10, 6))
-        sns.scatterplot(
-            data=productos_destacados,
+        fig_destacados = px.scatter(
+            productos_destacados,
             x="Quantity",
             y="Precio Promedio",
-            hue="Item",
-            palette="viridis",
-            s=100,
-            ax=ax
+            color="Item",
+            size="Precio Promedio",
+            title="Productos con Buen Volumen y Buen Precio Promedio",
+            hover_name="Item",
+            color_discrete_sequence=px.colors.qualitative.Set2
         )
-        ax.set_title("Productos con Buen Volumen y Buen Precio Promedio")
-        ax.set_xlabel("Cantidad Vendida")
-        ax.set_ylabel("Precio Promedio por Producto")
-        ax.legend(title="Producto", bbox_to_anchor=(1.05, 1), loc='upper left')
-        plt.tight_layout()
-        st.pyplot(fig)
+        st.plotly_chart(fig_destacados)
         
+    with col2:
         # -----------------------------------------------
         st.subheader("Volumen vs Precio Promedio por Producto")
+
         resumen_productos = cafe.groupby("Item").agg({
             "Quantity": "sum",
             "Price Per Unit": "mean"
         }).reset_index()
         
-        fig8, ax8 = plt.subplots()
-        sns.scatterplot(
-            data=resumen_productos,
+        fig8 = px.scatter(
+            resumen_productos,
             x="Quantity",
             y="Price Per Unit",
-            hue="Item",
-            s=100,
-            palette="Set2",
-            ax=ax8
+            color="Item",
+            size="Price Per Unit",
+            title="Volumen vs Precio Promedio por Producto",
+            hover_name="Item",
+            color_discrete_sequence=px.colors.qualitative.Set2
         )
-        ax8.set_title("Volumen vs Precio Promedio")
-        st.pyplot(fig8)
+        st.plotly_chart(fig8)
