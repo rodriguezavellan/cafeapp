@@ -295,7 +295,7 @@ elif seccion == "📅 Temporalidad":
           
 
 # --- Sección 3: Ventas y Patrones Generales ---
-elif seccion == "💰 Ventas y Patrones":
+if seccion == "💰 Ventas y Patrones":
     st.header("💰 Ventas y Patrones Generales")
 
     col1, col2 = st.columns(2)
@@ -307,24 +307,17 @@ elif seccion == "💰 Ventas y Patrones":
 
         st.subheader("Ticket Promedio Comida Bebida")
         ticket_tipo = cafe.groupby("Tipo")["Ingreso"].mean().reset_index()
-        ticket_tipo.columns = ["Tipo", "Ticket Promedio"]
-        ticket_tipo
+        st.dataframe(ticket_tipo)
 
         st.subheader("¿Existen diferencias entre semana y fin de semana?")
-        # Crear columna 'Tipo Día'
         cafe["Tipo Día"] = cafe["Día"].apply(lambda x: "Fin de semana" if x in ["Sábado", "Domingo"] else "Semana")
-        facturacion_tipo_dia = cafe.groupby("Tipo Día")["Ingreso"].sum().reset_index()
-        facturacion_tipo_dia.columns = ["Tipo Día", "Facturación"]
-        facturacion_tipo_dia
-        
         ticket_tipo_dia = cafe.groupby("Tipo Día")["Ingreso"].mean().reset_index()
-        ticket_tipo_dia.columns = ["Tipo Día", "Ticket Promedio"]
         sns.barplot(data=ticket_tipo_dia, x="Tipo Día", y="Ticket Promedio", palette="muted")
         plt.title("Ticket Promedio: Semana vs Fin de Semana")
         plt.ylabel("Importe promedio ($)")
         plt.xlabel("Tipo de Día")
         plt.tight_layout()
-        plt.show()
+        st.pyplot(plt)
 
     with col2:
         st.subheader("¿Cómo varía la facturación diaria?")
@@ -342,48 +335,38 @@ elif seccion == "💰 Ventas y Patrones":
     sns.barplot(data=tipo_resumen, x="Tipo", y="Ingreso", ax=ax7, palette="Accent")
     ax7.set_title("Ingreso total: Comida vs Bebida")
     st.pyplot(fig7)
-    
+
     st.subheader("Producto con buenas ventas y buen precio")
-    # Agrupar por producto para obtener volumen y precio promedio
     productos_resumen = cafe.groupby("Item")[["Quantity", "Ingreso"]].sum().reset_index()
-    
-    # Calcular el ticket promedio por producto
     productos_resumen["Precio Promedio"] = productos_resumen["Ingreso"] / productos_resumen["Quantity"]
-    
-    # Establecer umbrales (ajusta según sea necesario)
-    umbral_volumen = productos_resumen["Quantity"].quantile(0.75)  # Ejemplo: cuartil superior (75%)
-    umbral_precio_promedio = productos_resumen["Precio Promedio"].mean()  # Promedio general de precios
-    
-    # Filtrar productos que combinan alto volumen con buen precio promedio
-    productos_destacados = productos_resumen[(productos_resumen["Quantity"] > umbral_volumen) &
-                                             (productos_resumen["Precio Promedio"] > umbral_precio_promedio)]
-    
-    productos_destacados
+    umbral_volumen = productos_resumen["Quantity"].quantile(0.75)
+    umbral_precio_promedio = productos_resumen["Precio Promedio"].mean()
+
+    productos_destacados = productos_resumen[
+        (productos_resumen["Quantity"] > umbral_volumen) &
+        (productos_resumen["Precio Promedio"] > umbral_precio_promedio)
+    ]
 
     fig, ax = plt.subplots(figsize=(10, 6))
     sns.scatterplot(
-    data=productos_destacados,
-    x="Quantity",
-    y="Precio Promedio",
-    hue="Item",
-    palette="viridis",
-    s=100,
-    ax=ax
+        data=productos_destacados,
+        x="Quantity",
+        y="Precio Promedio",
+        hue="Item",
+        palette="viridis",
+        s=100,
+        ax=ax
     )
-    ax.set_title("Productos con Buen Volumen y Buen Precio Promedio")
-    st.pyplot(fig)
-    
-    # Títulos y etiquetas
-    plt.title("Productos Destacados: Alto Volumen y Buen Precio Promedio")
-    plt.xlabel("Cantidad Vendida")
-    plt.ylabel("Precio Promedio por Producto")
-    plt.legend(title="Producto", bbox_to_anchor=(1.05, 1), loc='upper left')  # Leyenda fuera del gráfico
+    ax.set_title("Productos Destacados: Alto Volumen y Buen Precio Promedio")
+    ax.set_xlabel("Cantidad Vendida")
+    ax.set_ylabel("Precio Promedio por Producto")
+    ax.legend(title="Producto", bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    st.pyplot(plt)
+    st.pyplot(fig)
 
     st.subheader("¿Qué productos combinan un volumen alto con un buen precio promedio?")
     resumen_productos = cafe.groupby("Item").agg({"Quantity": "sum", "Price Per Unit": "mean"}).reset_index()
     fig8, ax8 = plt.subplots()
-    sns.scatterplot(data=resumen_productos, x="Quantity", y="Price Per Unit", hue="Item", s=100,  palette="Set2")
+    sns.scatterplot(data=resumen_productos, x="Quantity", y="Price Per Unit", hue="Item", s=100, palette="Set2")
     ax8.set_title("Volumen vs Precio Promedio")
     st.pyplot(fig8)
