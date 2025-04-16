@@ -48,7 +48,9 @@ seccion = st.sidebar.radio("Ir a:", ["🧹 Limpieza de Datos", "📦 Análisis d
 # Cargar datos
 @st.cache_data
 def cargar_datos():
-    return pd.read_csv("cafe_limpio.csv", parse_dates=["Transaction Date"])
+    #return pd.read_csv("cafe_limpio.csv", parse_dates=["Transaction Date"])
+    return pd.read_csv("https://github.com/rodriguezavellan/cafeapp/blob/main/cafe_limpio.csv", parse_dates=["Transaction Date"])
+    
 
 cafe = cargar_datos()
 cafe['Ingreso'] = cafe['Quantity'] * cafe['Price Per Unit']
