@@ -1,0 +1,12 @@
+prefix=C:/Users/clara/anaconda3/anaconda/envs/app/Library
+exec_prefix=C:/Users/clara/anaconda3/anaconda/envs/app/Library
+libdir=C:/Users/clara/anaconda3/anaconda/envs/app/Library/lib
+includedir=C:/Users/clara/anaconda3/anaconda/envs/app/Library/include/libpng16
+
+Name: libpng
+Description: Loads and saves PNG files
+Version: 1.6.39
+Requires.private: zlib
+Libs: -L${libdir} -lpng16
+Libs.private: -lz
+Cflags: -I${includedir}
