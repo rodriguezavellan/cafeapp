@@ -294,33 +294,34 @@ elif seccion == "📅 Temporalidad":
         st.dataframe(Venta_por_mes.head(1))
           
 
-# --- Sección 3: Ventas y Patrones Generales ---
+# --- Sección de Ventas y Patrones ---
 if seccion == "💰 Ventas y Patrones":
     st.header("💰 Ventas y Patrones Generales")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("¿Cuál es el ticket promedio por operación?")
+        st.subheader("Ticket promedio por operación")
         ticket_promedio = cafe["Ingreso"].mean()
         st.metric(label="Ticket promedio", value=f"${ticket_promedio:.2f}")
 
-        st.subheader("Ticket Promedio Comida Bebida")
+        st.subheader("Ticket Promedio Comida vs Bebida")
         ticket_tipo = cafe.groupby("Tipo")["Ingreso"].mean().reset_index()
         st.dataframe(ticket_tipo)
 
-        st.subheader("¿Existen diferencias entre semana y fin de semana?")
+        st.subheader("Ticket: Semana vs Fin de Semana")
         cafe["Tipo Día"] = cafe["Día"].apply(lambda x: "Fin de semana" if x in ["Sábado", "Domingo"] else "Semana")
         ticket_tipo_dia = cafe.groupby("Tipo Día")["Ingreso"].mean().reset_index()
-        sns.barplot(data=ticket_tipo_dia, x="Tipo Día", y="Ticket Promedio", palette="muted")
-        plt.title("Ticket Promedio: Semana vs Fin de Semana")
-        plt.ylabel("Importe promedio ($)")
-        plt.xlabel("Tipo de Día")
-        plt.tight_layout()
-        st.pyplot(plt)
+
+        fig6, ax6 = plt.subplots()
+        sns.barplot(data=ticket_tipo_dia, x="Tipo Día", y="Ingreso", palette="muted", ax=ax6)
+        ax6.set_title("Ticket Promedio: Semana vs Fin de Semana")
+        ax6.set_ylabel("Importe promedio ($)")
+        ax6.set_xlabel("Tipo de Día")
+        st.pyplot(fig6)
 
     with col2:
-        st.subheader("¿Cómo varía la facturación diaria?")
+        st.subheader("Facturación diaria")
         fact_diaria = cafe.groupby("Transaction Date")["Ingreso"].sum().reset_index()
         fig5, ax5 = plt.subplots()
         sns.lineplot(data=fact_diaria, x="Transaction Date", y="Ingreso", ax=ax5)
@@ -329,16 +330,17 @@ if seccion == "💰 Ventas y Patrones":
         ax5.set_xlabel("Fecha")
         st.pyplot(fig5)
 
-    st.subheader("¿Qué categoría de productos predomina en las ventas?")
+    st.subheader("Ingreso total: Comida vs Bebida")
     tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
     fig7, ax7 = plt.subplots()
     sns.barplot(data=tipo_resumen, x="Tipo", y="Ingreso", ax=ax7, palette="Accent")
     ax7.set_title("Ingreso total: Comida vs Bebida")
     st.pyplot(fig7)
 
-    st.subheader("Producto con buenas ventas y buen precio")
+    st.subheader("Productos con buen volumen y buen precio promedio")
     productos_resumen = cafe.groupby("Item")[["Quantity", "Ingreso"]].sum().reset_index()
     productos_resumen["Precio Promedio"] = productos_resumen["Ingreso"] / productos_resumen["Quantity"]
+
     umbral_volumen = productos_resumen["Quantity"].quantile(0.75)
     umbral_precio_promedio = productos_resumen["Precio Promedio"].mean()
 
@@ -357,16 +359,24 @@ if seccion == "💰 Ventas y Patrones":
         s=100,
         ax=ax
     )
-    ax.set_title("Productos Destacados: Alto Volumen y Buen Precio Promedio")
+    ax.set_title("Productos con Buen Volumen y Buen Precio Promedio")
     ax.set_xlabel("Cantidad Vendida")
     ax.set_ylabel("Precio Promedio por Producto")
     ax.legend(title="Producto", bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
     st.pyplot(fig)
 
-    st.subheader("¿Qué productos combinan un volumen alto con un buen precio promedio?")
+    st.subheader("Volumen vs Precio Promedio por Producto")
     resumen_productos = cafe.groupby("Item").agg({"Quantity": "sum", "Price Per Unit": "mean"}).reset_index()
     fig8, ax8 = plt.subplots()
-    sns.scatterplot(data=resumen_productos, x="Quantity", y="Price Per Unit", hue="Item", s=100, palette="Set2")
+    sns.scatterplot(
+        data=resumen_productos,
+        x="Quantity",
+        y="Price Per Unit",
+        hue="Item",
+        s=100,
+        palette="Set2",
+        ax=ax8
+    )
     ax8.set_title("Volumen vs Precio Promedio")
     st.pyplot(fig8)
