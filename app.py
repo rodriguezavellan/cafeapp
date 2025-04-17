@@ -356,12 +356,8 @@ elif seccion == "💰 Ventas y Patrones":
     with col2:
         st.subheader("¿Cómo varía la facturación diaria?")
         fact_diaria = cafe.groupby("Transaction Date")["Ingreso"].sum().reset_index()
-        fig5, ax5 = plt.subplots()
-        sns.lineplot(data=fact_diaria, x="Transaction Date", y="Ingreso", ax=ax5)
-        ax5.set_title("Facturación diaria")
-        ax5.set_ylabel("Ingreso ($)")
-        ax5.set_xlabel("Fecha")
-        st.pyplot(fig5)
+        fact_diaria
+        
 
         # Ingreso total por tipo
         import plotly.express as px
