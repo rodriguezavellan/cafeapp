@@ -4,7 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 from PIL import Image
-
+import plotly
 
 # Configuración de página
 st.set_page_config(page_title="Análisis de Ventas de Gio's Café", layout="wide")
@@ -195,11 +195,28 @@ elif seccion == "📦 Análisis de Producto":
             .reset_index(drop=True),
             use_container_width=True
         )
+    col3, col4 = st.columns(2)
 
-    st.subheader("¿Hay productos con bajo nivel de ventas que podrían dejar de ofrecerse?")
-    producto_menos = ventas_item.iloc[-3:]  # Últimos 3 menos vendidos
-    st.dataframe(producto_menos.rename(columns={"Item": "Producto","Quantity": "Cantidad Vendida"}))
-
+    with col3:
+        st.subheader("¿Hay productos con bajo nivel de ventas que podrían dejar de ofrecerse?")
+        producto_menos = ventas_item.iloc[-3:]  # Últimos 3 menos vendidos
+        st.dataframe(producto_menos.rename(columns={"Item": "Producto","Quantity": "Cantidad Vendida"}))
+    
+        labels = producto_menos["Item"]
+        sizes = producto_menos["Quantity"]
+        colors = sns.color_palette("rocket", len(labels))
+        
+        # Crear gráfico
+        fig, ax = plt.subplots()
+        ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
+        ax.axis('equal')  # Para que el gráfico sea circular
+        textprops={'color': 'white'}
+        
+        # Mostrar en Streamlit
+        st.pyplot(fig)
+        
+    
+        
 # --- Sección 2: Temporalidad ---
 elif seccion == "📅 Temporalidad":
     st.header("📅 Temporalidad")
@@ -218,8 +235,9 @@ elif seccion == "📅 Temporalidad":
     with col2:
         st.subheader("¿Hubo algún mes particularmente alto o bajo en términos de facturación?")
         ingresos_mes = cafe.groupby("Mes")["Ingreso"].sum().reset_index().sort_values("Ingreso", ascending=False)
+        colors = sns.dark_palette("#69d", reverse=True, n_colors=len(ingresos_mes))
         fig4, ax4 = plt.subplots()
-        sns.barplot(data=ingresos_mes, x="Mes", y="Ingreso", ax=ax4, palette="Blues")
+        sns.barplot(data=ingresos_mes, x="Mes", y="Ingreso", ax=ax4, palette=colors)
         ax4.set_title("Ingresos mensuales")
         ax4.set_xticklabels(ax4.get_xticklabels(), rotation=45)
         st.pyplot(fig4)
