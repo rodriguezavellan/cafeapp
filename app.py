@@ -363,8 +363,15 @@ elif seccion == "💰 Ventas y Patrones":
         ax5.set_xlabel("Fecha")
         st.pyplot(fig5)
 
-     
-    col1, col2 = st.columns(2)
+        # Ingreso total por tipo
+        import plotly.express as px
+       # st.subheader("Ingreso total: Comida vs Bebida")
+        #tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
+        
+        #fig7 = px.bar(tipo_resumen, x="Tipo", y="Ingreso", color="Tipo",
+                     # title="Ingreso total: Comida vs Bebida", color_discrete_sequence=px.colors.qualitative.Set2)
+       # st.plotly_chart(fig7)
+   # col1, col2 = st.columns(2)
 
     with col1:
         # -----------------------------------------------
