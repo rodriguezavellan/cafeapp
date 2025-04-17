@@ -363,19 +363,19 @@ elif seccion == "💰 Ventas y Patrones":
         
         # Agrupar por día
         fact_diaria = cafe.groupby("Día")["Ingreso"].sum().reset_index()
-        #fact_diaria
+        fact_diaria
         
         # Crear gráfico de líneas
-        fig, ax = plt.subplots(figsize=(10, 4))
-        ax.plot(fact_diaria["Día"], fact_diaria["Ingreso"], marker='o', color='green')
+        #fig, ax = plt.subplots(figsize=(10, 4))
+        #ax.plot(fact_diaria["Día"], fact_diaria["Ingreso"], marker='o', color='green')
         
-        ax.set_title("Facturación diaria", color='white')
-        ax.set_xlabel("Fecha", color='white')
-        ax.set_ylabel("Ingreso ($)", color='brown')
-        ax.tick_params(colors='brown')
-        fig.autofmt_xdate()
+        #ax.set_title("Facturación diaria", color='white')
+        #ax.set_xlabel("Fecha", color='white')
+        #ax.set_ylabel("Ingreso ($)", color='brown')
+        #ax.tick_params(colors='brown')
+        #fig.autofmt_xdate()
         
-        st.pyplot(fig)
+       # st.pyplot(fig)
 
         # Ingreso total por tipo
         import plotly.express as px
