@@ -380,15 +380,16 @@ elif seccion == "💰 Ventas y Patrones":
         import plotly.express as px
         st.subheader("Ingreso total: Comida vs Bebida")
         tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
-        tipo_resumen
         
-      
+        fig7 = px.bar(tipo_resumen, x="Tipo", y="Ingreso", color="Tipo",
+                      title="Ingreso total: Comida vs Bebida", color_discrete_sequence=px.colors.qualitative.Set2)
+        st.plotly_chart(fig7)
         
     col1, col2 = st.columns(2)
 
     with col1:
         # -----------------------------------------------
-        
+        st.subheader("Productos con buen volumen y buen precio promedio")
 
         productos_resumen = cafe.groupby("Item")[["Quantity", "Ingreso"]].sum().reset_index()
         productos_resumen = productos_resumen[productos_resumen["Quantity"] != 0].copy()
@@ -417,7 +418,7 @@ elif seccion == "💰 Ventas y Patrones":
         
     with col2:
         # -----------------------------------------------
-       
+        st.subheader("Volumen vs Precio Promedio por Producto")
 
         resumen_productos = cafe.groupby("Item").agg({
             "Quantity": "sum",
