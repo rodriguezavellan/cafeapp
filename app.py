@@ -337,6 +337,10 @@ elif seccion == "💰 Ventas y Patrones":
         ticket_promedio = cafe["Ingreso"].mean()
         st.metric(label="Ticket promedio", value=f"${ticket_promedio:.2f}")
 
+        st.subheader("Venta Total Anual")
+        venta_anual = cafe["Total Spent"].sum()
+        st.metric(label="La Venta total del año es", value=f"${venta_anual:.2f}")
+
         st.subheader("¿Existen diferencias entre semana y fin de semana?")
         # Crear columna 'Tipo Día'
         cafe["Tipo Día"] = cafe["Día"].apply(lambda x: "Fin de semana" if x in ["Sábado", "Domingo"] else "Semana")
@@ -354,24 +358,38 @@ elif seccion == "💰 Ventas y Patrones":
         plt.show()
 
     with col2:
-        st.subheader("¿Cómo varía la facturación diaria?")
-        fact_diaria = cafe.groupby("Transaction Date")["Ingreso"].sum().reset_index()
-        fact_diaria
         
+        st.subheader("¿Cómo varía la facturación diaria?")
+        
+        # Agrupar por día
+        fact_diaria = cafe.groupby("Transaction Date")["Ingreso"].sum().reset_index()
+        
+        # Crear gráfico de líneas
+        fig, ax = plt.subplots(figsize=(10, 4))
+        ax.plot(fact_diaria["Transaction Date"], fact_diaria["Ingreso"], marker='o', color='blue')
+        
+        ax.set_title("Facturación diaria", color='white')
+        ax.set_xlabel("Fecha", color='white')
+        ax.set_ylabel("Ingreso ($)", color='brown')
+        ax.tick_params(colors='brown')
+        fig.autofmt_xdate()
+        
+        st.pyplot(fig)
 
         # Ingreso total por tipo
         import plotly.express as px
-       # st.subheader("Ingreso total: Comida vs Bebida")
-        #tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
+        st.subheader("Ingreso total: Comida vs Bebida")
+        tipo_resumen = cafe.groupby("Tipo")["Ingreso"].sum().reset_index()
         
-        #fig7 = px.bar(tipo_resumen, x="Tipo", y="Ingreso", color="Tipo",
-                     # title="Ingreso total: Comida vs Bebida", color_discrete_sequence=px.colors.qualitative.Set2)
-       # st.plotly_chart(fig7)
-   # col1, col2 = st.columns(2)
+        fig7 = px.bar(tipo_resumen, x="Tipo", y="Ingreso", color="Tipo",
+                      title="Ingreso total: Comida vs Bebida", color_discrete_sequence=px.colors.qualitative.Set2)
+        st.plotly_chart(fig7)
+        
+    col1, col2 = st.columns(2)
 
     with col1:
         # -----------------------------------------------
-        st.subheader("Productos con buen volumen y buen precio promedio")
+        
 
         productos_resumen = cafe.groupby("Item")[["Quantity", "Ingreso"]].sum().reset_index()
         productos_resumen = productos_resumen[productos_resumen["Quantity"] != 0].copy()
@@ -400,7 +418,7 @@ elif seccion == "💰 Ventas y Patrones":
         
     with col2:
         # -----------------------------------------------
-        st.subheader("Volumen vs Precio Promedio por Producto")
+       
 
         resumen_productos = cafe.groupby("Item").agg({
             "Quantity": "sum",
